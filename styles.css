@@ -129,6 +129,12 @@ h2 { margin-bottom: 4px; font-size: 1.5rem; letter-spacing: -.025em; }
 .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; min-height: 30px; margin-bottom: 14px; color: var(--muted); font-size: .875rem; }
 .legend-item { display: inline-flex; align-items: center; gap: 7px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
+.employee-controls { margin: 0 auto 16px; border: 1px solid #bfd4ff; border-radius: 16px; padding: 14px; background: var(--sky); }
+.employee-controls[hidden] { display: none; }
+.employee-controls p { margin: 7px 0 12px; color: var(--muted); font-size: .875rem; }
+.session-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.calendar-duration { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.calendar-duration button { min-width: 0; }
 
 .calendar-card {
   overflow: hidden;
@@ -155,6 +161,7 @@ h2 { margin-bottom: 4px; font-size: 1.5rem; letter-spacing: -.025em; }
 .calendar-day.today .day-number { display: grid; place-items: center; width: 28px; height: 28px; margin: -4px 0 4px -4px; border-radius: 50%; background: var(--navy); color: white; }
 .calendar-day.editable:hover { background: var(--sky); }
 .calendar-day.locked-day { cursor: default; }
+.calendar-grid.saving { opacity: .55; pointer-events: none; }
 .day-number { display: block; margin-bottom: 5px; font-weight: 800; }
 .leave-chip { display: block; overflow: hidden; margin-top: 4px; border-left: 4px solid currentColor; border-radius: 5px; padding: 3px 5px; background: color-mix(in srgb, currentColor 10%, white); font-size: .78rem; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
 .hint { margin: 14px 0 0; color: var(--muted); text-align: center; font-size: .875rem; }
@@ -227,6 +234,7 @@ input[type="color"] { padding: 5px; }
   .leave-chip { border-left-width: 3px; padding: 2px 3px; font-size: .68rem; }
   .admin-grid { grid-template-columns: 1fr; }
   .form-actions { grid-template-columns: 1fr; gap: 0; }
+  .calendar-duration { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media (max-width: 430px) {
