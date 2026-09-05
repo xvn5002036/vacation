@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#16324f">
   <meta name="description" content="團隊共用預休月曆與登記系統">
   <title>員工預休月曆</title>
-  <link rel="stylesheet" href="styles.css?v=20260906-1">
+  <link rel="stylesheet" href="styles.css?v=20260906-2">
 </head>
 <body>
   <div class="shell">
@@ -60,11 +60,27 @@
             <input id="employeeUsername" type="text" autocomplete="username" minlength="3" maxlength="40" required>
             <label for="employeePassword">登入密碼</label>
             <input id="employeePassword" type="password" autocomplete="current-password" minlength="6" maxlength="72" required>
-            <label for="leaveDate">預休日期</label>
-            <input id="leaveDate" type="date" required>
+            <div class="date-range-grid">
+              <div>
+                <label for="leaveStartDate">開始日期</label>
+                <input id="leaveStartDate" type="date" required>
+              </div>
+              <div>
+                <label for="leaveEndDate">結束日期</label>
+                <input id="leaveEndDate" type="date" required>
+              </div>
+            </div>
+            <div class="duration-picker" aria-label="快速選擇連休天數">
+              <span>快速選擇：</span>
+              <button type="button" data-duration="1">1 天</button>
+              <button type="button" data-duration="2">2 天</button>
+              <button type="button" data-duration="3">3 天</button>
+              <button type="button" data-duration="7">7 天</button>
+            </div>
+            <p class="range-summary" id="rangeSummary" aria-live="polite">共 1 天</p>
             <div class="form-actions">
-              <button class="primary full" type="submit" value="add">新增預休</button>
-              <button class="outline danger full" type="submit" value="remove">取消這天</button>
+              <button class="primary full" type="submit" value="add">新增這段預休</button>
+              <button class="outline danger full" type="submit" value="remove">取消這段預休</button>
             </div>
           </form>
         </div>
@@ -112,7 +128,7 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="config.js?v=20260906-1"></script>
-  <script src="app.js?v=20260906-1"></script>
+  <script src="config.js?v=20260906-2"></script>
+  <script src="app.js?v=20260906-2"></script>
 </body>
 </html>
