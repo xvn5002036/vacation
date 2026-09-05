@@ -164,8 +164,8 @@ begin
   if admin_hash is null or extensions.crypt(coalesce(current_admin_code, ''), admin_hash) <> admin_hash then
     raise exception '目前管理密碼不正確';
   end if;
-  if char_length(coalesce(new_admin_code, '')) < 8 or char_length(new_admin_code) > 64 then
-    raise exception '新管理密碼至少需要 8 個字元';
+  if char_length(coalesce(new_admin_code, '')) < 1 or char_length(new_admin_code) > 64 then
+    raise exception '新管理密碼至少需要 1 個字元';
   end if;
   update private.app_config set admin_code_hash = extensions.crypt(new_admin_code, extensions.gen_salt('bf', 10)), updated_at = now()
   where singleton;
