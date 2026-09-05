@@ -6,7 +6,8 @@
     month: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     employees: [],
     leaves: [],
-    editStatus: null
+    editStatus: null,
+    duration: 1
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -25,18 +26,14 @@
   };
 
   function rangeDayCount() {
-    const start = $("#leaveStartDate").value;
-    const end = $("#leaveEndDate").value;
-    if (!start || !end) return 0;
-    return Math.round((parseIsoDate(end) - parseIsoDate(start)) / 86400000) + 1;
+    return state.duration;
   }
 
   function updateRangeSummary() {
     const days = rangeDayCount();
     const summary = $("#rangeSummary");
-    summary.textContent = days > 0 ? `共 ${days} 天` : "結束日期不可早於開始日期";
-    summary.classList.toggle("invalid", days <= 0 || days > 31);
-    if (days > 31) summary.textContent = "一次最多可選擇連續 31 天";
+    summary.textContent = `已選擇 ${days} 天`;
+    summary.classList.remove("invalid");
     $$("[data-duration]").forEach((button) => button.classList.toggle("active", Number(button.dataset.duration) === days));
   }
 
@@ -98,17 +95,12 @@
 
   function renderEmployees() {
     const legend = $("#employeeLegend");
-    const select = $("#leaveEmployee");
     if (!state.employees.length) {
       legend.innerHTML = "<span>尚未新增員工</span>";
-      select.innerHTML = '<option value="">請先由管理員新增員工</option>';
       return;
     }
     legend.innerHTML = state.employees.map((employee) =>
       `<span class="legend-item"><span class="dot" style="background:${employee.color}"></span>${escapeHtml(employee.employee_name)}</span>`
-    ).join("");
-    select.innerHTML = '<option value="">請選擇姓名</option>' + state.employees.map((employee) =>
-      `<option value="${employee.employee_id}">${escapeHtml(employee.employee_name)}</option>`
     ).join("");
   }
 
@@ -163,10 +155,9 @@
     const rows = await rpc("get_edit_status");
     state.editStatus = rows[0];
     const minDate = toIsoDate(firstFutureMonthDate());
-    [$("#leaveStartDate"), $("#leaveEndDate")].forEach((input) => {
-      input.min = minDate;
-      if (!input.value || input.value < minDate) input.value = minDate;
-    });
+    const input = $("#leaveStartDate");
+    input.min = minDate;
+    if (!input.value || input.value < minDate) input.value = minDate;
     updateRangeSummary();
     renderEditStatus();
     renderCalendar();
@@ -204,42 +195,31 @@
     const day = event.target.closest("[data-date]");
     if (!day) return;
     $("#leaveStartDate").value = day.dataset.date;
-    $("#leaveEndDate").value = day.dataset.date;
     updateRangeSummary();
     setPage("leave");
   });
 
-  $("#leaveStartDate").addEventListener("change", () => {
-    if (!$("#leaveEndDate").value || $("#leaveEndDate").value < $("#leaveStartDate").value) {
-      $("#leaveEndDate").value = $("#leaveStartDate").value;
-    }
-    updateRangeSummary();
-  });
-  $("#leaveEndDate").addEventListener("change", updateRangeSummary);
+  $("#leaveStartDate").addEventListener("change", updateRangeSummary);
   $$("[data-duration]").forEach((button) => button.addEventListener("click", () => {
-    const start = $("#leaveStartDate").value;
-    if (!start) return;
-    $("#leaveEndDate").value = addDays(start, Number(button.dataset.duration) - 1);
+    state.duration = Number(button.dataset.duration);
     updateRangeSummary();
   }));
 
   $("#leaveForm").addEventListener("submit", withBusy($("#leaveForm"), async (event) => {
     const removing = event.submitter?.value === "remove";
     const requestedDays = rangeDayCount();
-    if (requestedDays <= 0) throw new Error("結束日期不可早於開始日期");
-    if (requestedDays > 31) throw new Error("一次最多可選擇連續 31 天");
+    const startDate = $("#leaveStartDate").value;
     const credentials = {
-      selected_employee_id: $("#leaveEmployee").value,
       login_username: $("#employeeUsername").value,
       login_password: $("#employeePassword").value,
-      selected_start_date: $("#leaveStartDate").value,
-      selected_end_date: $("#leaveEndDate").value
+      selected_start_date: startDate,
+      selected_end_date: addDays(startDate, requestedDays - 1)
     };
     const result = await rpc(removing ? "delete_leave_range" : "register_leave_range", credentials);
     $("#employeePassword").value = "";
     const count = result?.affected_days || requestedDays;
     notify(removing ? `已取消 ${count} 天預休` : `已登記 ${count} 天預休`);
-    const selected = parseIsoDate($("#leaveStartDate").value);
+    const selected = parseIsoDate(startDate);
     state.month = new Date(selected.getFullYear(), selected.getMonth(), 1);
     await loadMonth();
     setPage("calendar");
