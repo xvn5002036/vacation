@@ -143,8 +143,8 @@ begin
      or clean_username !~ '^[A-Za-z0-9._-]+$' then
     raise exception '登入帳號需為 3 到 40 個英數字、句點、底線或連字號';
   end if;
-  if char_length(coalesce(login_password, '')) < 6 or char_length(login_password) > 72 then
-    raise exception '登入密碼必須是 6 到 72 個字元';
+  if char_length(coalesce(login_password, '')) < 1 or char_length(login_password) > 72 then
+    raise exception '登入密碼必須是 1 到 72 個字元';
   end if;
   if employee_color !~ '^#[0-9A-Fa-f]{6}$' then raise exception '顏色格式不正確'; end if;
   insert into private.employees (name, login_username, password_hash, color)
