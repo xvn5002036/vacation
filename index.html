@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#16324f">
   <meta name="description" content="團隊共用預休月曆與登記系統">
   <title>員工預休月曆</title>
-  <link rel="stylesheet" href="styles.css?v=20260906-3">
+  <link rel="stylesheet" href="styles.css?v=20260906-4">
 </head>
 <body>
   <div class="shell">
@@ -15,12 +15,12 @@
         <p class="eyebrow">TEAM PLANNED LEAVE</p>
         <h1>員工預休月曆</h1>
       </div>
-      <button class="primary compact" id="openLeaveForm" type="button">＋ 登記預休</button>
+      <button class="primary compact" id="openLeaveForm" type="button">員工登入</button>
     </header>
 
     <nav class="tabs" aria-label="主要功能">
       <button class="tab active" data-page="calendar" type="button">月曆</button>
-      <button class="tab" data-page="leave" type="button">登記預休</button>
+      <button class="tab" data-page="leave" type="button">員工登入</button>
       <button class="tab" data-page="admin" type="button">員工管理</button>
     </nav>
 
@@ -37,44 +37,44 @@
         </div>
 
         <div class="legend" id="employeeLegend" aria-label="員工顏色"></div>
+        <div class="employee-controls" id="employeeControls" hidden>
+          <div class="session-row">
+            <strong id="sessionName">已登入</strong>
+            <button class="text-button" id="logoutButton" type="button">登出</button>
+          </div>
+          <p>選擇天數後點月曆日期，立即新增；再點自己的預休日期即可取消。</p>
+          <div class="duration-picker calendar-duration" aria-label="選擇排休天數">
+            <button class="active" type="button" data-duration="1">1 天</button>
+            <button type="button" data-duration="2">2 天</button>
+            <button type="button" data-duration="3">3 天</button>
+            <button type="button" data-duration="4">4 天</button>
+            <button type="button" data-duration="5">5 天</button>
+            <button type="button" data-duration="6">6 天</button>
+            <button type="button" data-duration="7">7 天</button>
+          </div>
+        </div>
         <div class="calendar-card">
           <div class="weekdays" aria-hidden="true">
             <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
           </div>
           <div class="calendar-grid" id="calendarGrid" aria-live="polite"></div>
         </div>
-        <p class="hint" id="calendarHint">每月 1～15 日可登記或取消未來月份的預休。</p>
+        <p class="hint" id="calendarHint">登入後，直接點日期即可新增或取消預休。</p>
       </section>
 
       <section class="page" id="page-leave">
         <div class="form-card">
           <div class="section-heading">
-            <p class="eyebrow">REGISTER</p>
-            <h2>登記或取消預休</h2>
-            <p>輸入自己的帳號密碼，系統會自動將姓名顯示在月曆上。</p>
+            <p class="eyebrow">LOGIN</p>
+            <h2>員工登入</h2>
+            <p>登入一次後，直接點月曆日期即可新增或取消預休。</p>
           </div>
-          <form id="leaveForm">
+          <form id="loginForm">
             <label for="employeeUsername">登入帳號</label>
             <input id="employeeUsername" type="text" autocomplete="username" minlength="3" maxlength="40" required>
             <label for="employeePassword">登入密碼</label>
             <input id="employeePassword" type="password" autocomplete="current-password" minlength="6" maxlength="72" required>
-            <label for="leaveStartDate">開始日期</label>
-            <input id="leaveStartDate" type="date" required>
-            <div class="duration-picker" aria-label="快速選擇連休天數">
-              <span>排休天數：</span>
-              <button class="active" type="button" data-duration="1">1 天</button>
-              <button type="button" data-duration="2">2 天</button>
-              <button type="button" data-duration="3">3 天</button>
-              <button type="button" data-duration="4">4 天</button>
-              <button type="button" data-duration="5">5 天</button>
-              <button type="button" data-duration="6">6 天</button>
-              <button type="button" data-duration="7">7 天</button>
-            </div>
-            <p class="range-summary" id="rangeSummary" aria-live="polite">已選擇 1 天</p>
-            <div class="form-actions">
-              <button class="primary full" type="submit" value="add">新增這段預休</button>
-              <button class="outline danger full" type="submit" value="remove">取消這段預休</button>
-            </div>
+            <button class="primary full" type="submit">登入並前往月曆</button>
           </form>
         </div>
       </section>
@@ -121,7 +121,7 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="config.js?v=20260906-3"></script>
-  <script src="app.js?v=20260906-3"></script>
+  <script src="config.js?v=20260906-4"></script>
+  <script src="app.js?v=20260906-4"></script>
 </body>
 </html>
