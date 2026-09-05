@@ -18,6 +18,27 @@
     return `${y}-${m}-${d}`;
   };
   const parseIsoDate = (value) => new Date(`${value}T12:00:00`);
+  const addDays = (value, days) => {
+    const date = parseIsoDate(value);
+    date.setDate(date.getDate() + days);
+    return toIsoDate(date);
+  };
+
+  function rangeDayCount() {
+    const start = $("#leaveStartDate").value;
+    const end = $("#leaveEndDate").value;
+    if (!start || !end) return 0;
+    return Math.round((parseIsoDate(end) - parseIsoDate(start)) / 86400000) + 1;
+  }
+
+  function updateRangeSummary() {
+    const days = rangeDayCount();
+    const summary = $("#rangeSummary");
+    summary.textContent = days > 0 ? `共 ${days} 天` : "結束日期不可早於開始日期";
+    summary.classList.toggle("invalid", days <= 0 || days > 31);
+    if (days > 31) summary.textContent = "一次最多可選擇連續 31 天";
+    $$("[data-duration]").forEach((button) => button.classList.toggle("active", Number(button.dataset.duration) === days));
+  }
 
   async function rpc(name, body = {}) {
     if (!config.supabaseUrl || !config.supabasePublishableKey || config.supabaseUrl.includes("YOUR_PROJECT")) {
@@ -142,8 +163,11 @@
     const rows = await rpc("get_edit_status");
     state.editStatus = rows[0];
     const minDate = toIsoDate(firstFutureMonthDate());
-    $("#leaveDate").min = minDate;
-    if (!$("#leaveDate").value || $("#leaveDate").value < minDate) $("#leaveDate").value = minDate;
+    [$("#leaveStartDate"), $("#leaveEndDate")].forEach((input) => {
+      input.min = minDate;
+      if (!input.value || input.value < minDate) input.value = minDate;
+    });
+    updateRangeSummary();
     renderEditStatus();
     renderCalendar();
   }
@@ -179,22 +203,43 @@
   $("#calendarGrid").addEventListener("click", (event) => {
     const day = event.target.closest("[data-date]");
     if (!day) return;
-    $("#leaveDate").value = day.dataset.date;
+    $("#leaveStartDate").value = day.dataset.date;
+    $("#leaveEndDate").value = day.dataset.date;
+    updateRangeSummary();
     setPage("leave");
   });
 
+  $("#leaveStartDate").addEventListener("change", () => {
+    if (!$("#leaveEndDate").value || $("#leaveEndDate").value < $("#leaveStartDate").value) {
+      $("#leaveEndDate").value = $("#leaveStartDate").value;
+    }
+    updateRangeSummary();
+  });
+  $("#leaveEndDate").addEventListener("change", updateRangeSummary);
+  $$("[data-duration]").forEach((button) => button.addEventListener("click", () => {
+    const start = $("#leaveStartDate").value;
+    if (!start) return;
+    $("#leaveEndDate").value = addDays(start, Number(button.dataset.duration) - 1);
+    updateRangeSummary();
+  }));
+
   $("#leaveForm").addEventListener("submit", withBusy($("#leaveForm"), async (event) => {
     const removing = event.submitter?.value === "remove";
+    const requestedDays = rangeDayCount();
+    if (requestedDays <= 0) throw new Error("結束日期不可早於開始日期");
+    if (requestedDays > 31) throw new Error("一次最多可選擇連續 31 天");
     const credentials = {
       selected_employee_id: $("#leaveEmployee").value,
       login_username: $("#employeeUsername").value,
       login_password: $("#employeePassword").value,
-      selected_date: $("#leaveDate").value
+      selected_start_date: $("#leaveStartDate").value,
+      selected_end_date: $("#leaveEndDate").value
     };
-    await rpc(removing ? "delete_leave" : "register_leave", credentials);
+    const result = await rpc(removing ? "delete_leave_range" : "register_leave_range", credentials);
     $("#employeePassword").value = "";
-    notify(removing ? "這天的預休已取消" : "預休日期已登記");
-    const selected = parseIsoDate($("#leaveDate").value);
+    const count = result?.affected_days || requestedDays;
+    notify(removing ? `已取消 ${count} 天預休` : `已登記 ${count} 天預休`);
+    const selected = parseIsoDate($("#leaveStartDate").value);
     state.month = new Date(selected.getFullYear(), selected.getMonth(), 1);
     await loadMonth();
     setPage("calendar");
