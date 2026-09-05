@@ -4,28 +4,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#16324f">
-  <meta name="description" content="五人團隊共用休假月曆與登記系統">
-  <title>員工休假月曆</title>
+  <meta name="description" content="團隊共用預休月曆與登記系統">
+  <title>員工預休月曆</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">TEAM LEAVE CALENDAR</p>
-        <h1>員工休假月曆</h1>
+        <p class="eyebrow">TEAM PLANNED LEAVE</p>
+        <h1>員工預休月曆</h1>
       </div>
-      <button class="primary compact" id="openLeaveForm" type="button">＋ 登記休假</button>
+      <button class="primary compact" id="openLeaveForm" type="button">＋ 登記預休</button>
     </header>
 
     <nav class="tabs" aria-label="主要功能">
       <button class="tab active" data-page="calendar" type="button">月曆</button>
-      <button class="tab" data-page="leave" type="button">登記休假</button>
+      <button class="tab" data-page="leave" type="button">登記預休</button>
       <button class="tab" data-page="admin" type="button">員工管理</button>
     </nav>
 
     <main>
       <section class="page active" id="page-calendar">
+        <div class="status-banner" id="editStatus" aria-live="polite">正在確認本月填寫狀態…</div>
         <div class="calendar-toolbar">
           <button class="icon-button" id="prevMonth" type="button" aria-label="上一個月">‹</button>
           <div>
@@ -42,24 +43,29 @@
           </div>
           <div class="calendar-grid" id="calendarGrid" aria-live="polite"></div>
         </div>
-        <p class="hint">點選日期可以直接前往登記。</p>
+        <p class="hint" id="calendarHint">每月 1～15 日可登記或取消未來月份的預休。</p>
       </section>
 
       <section class="page" id="page-leave">
         <div class="form-card">
           <div class="section-heading">
             <p class="eyebrow">REGISTER</p>
-            <h2>登記休假</h2>
-            <p>選擇姓名並輸入自己的員工編號。</p>
+            <h2>登記或取消預休</h2>
+            <p>每次操作都要輸入自己的登入帳號與密碼；月曆只會顯示姓名。</p>
           </div>
           <form id="leaveForm">
             <label for="leaveEmployee">姓名</label>
             <select id="leaveEmployee" required></select>
-            <label for="employeeCode">員工編號</label>
-            <input id="employeeCode" type="password" autocomplete="off" minlength="4" maxlength="32" required>
-            <label for="leaveDate">休假日期</label>
+            <label for="employeeUsername">登入帳號</label>
+            <input id="employeeUsername" type="text" autocomplete="username" minlength="3" maxlength="40" required>
+            <label for="employeePassword">登入密碼</label>
+            <input id="employeePassword" type="password" autocomplete="current-password" minlength="6" maxlength="72" required>
+            <label for="leaveDate">預休日期</label>
             <input id="leaveDate" type="date" required>
-            <button class="primary full" type="submit">完成登記</button>
+            <div class="form-actions">
+              <button class="primary full" type="submit" value="add">新增預休</button>
+              <button class="outline danger full" type="submit" value="remove">取消這天</button>
+            </div>
           </form>
         </div>
       </section>
@@ -70,15 +76,17 @@
             <div class="section-heading">
               <p class="eyebrow">ADMIN</p>
               <h2>新增員工</h2>
-              <p>員工編號只用於本人登記驗證。</p>
+              <p>建立員工姓名與專屬登入帳密；月曆不會公開帳號。</p>
             </div>
             <form id="employeeForm">
               <label for="adminCode">管理密碼</label>
               <input id="adminCode" type="password" autocomplete="current-password" required>
               <label for="employeeName">員工姓名</label>
               <input id="employeeName" type="text" maxlength="30" required>
-              <label for="newEmployeeCode">員工編號</label>
-              <input id="newEmployeeCode" type="password" minlength="4" maxlength="32" autocomplete="off" required>
+              <label for="newEmployeeUsername">登入帳號</label>
+              <input id="newEmployeeUsername" type="text" minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]+" title="限英文字母、數字、句點、底線或連字號" autocomplete="off" required>
+              <label for="newEmployeePassword">初始密碼</label>
+              <input id="newEmployeePassword" type="password" minlength="6" maxlength="72" autocomplete="new-password" required>
               <label for="employeeColor">月曆顏色</label>
               <input id="employeeColor" type="color" value="#2563eb" required>
               <button class="primary full" type="submit">新增員工</button>
@@ -108,4 +116,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-
