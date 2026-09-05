@@ -173,6 +173,13 @@ h2 { margin-bottom: 4px; font-size: 1.5rem; letter-spacing: -.025em; }
 form { display: grid; gap: 9px; }
 .form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .outline.danger { border-color: #f2b8b5; color: var(--danger); }
+.date-range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.date-range-grid > div { display: grid; gap: 9px; }
+.duration-picker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 5px; color: var(--muted); font-size: .875rem; }
+.duration-picker button { min-height: 38px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; background: white; color: var(--navy); font-weight: 800; }
+.duration-picker button:hover, .duration-picker button.active { border-color: var(--blue); background: var(--sky); color: var(--blue); }
+.range-summary { margin: 3px 0 0; border-radius: 10px; padding: 9px 12px; background: var(--wash); color: var(--navy); text-align: center; font-weight: 800; }
+.range-summary.invalid { background: #fff1f0; color: var(--danger); }
 label { margin-top: 5px; color: var(--navy); font-size: .875rem; font-weight: 800; }
 input, select {
   width: 100%;
@@ -221,6 +228,7 @@ input[type="color"] { padding: 5px; }
   .leave-chip { border-left-width: 3px; padding: 2px 3px; font-size: .68rem; }
   .admin-grid { grid-template-columns: 1fr; }
   .form-actions { grid-template-columns: 1fr; gap: 0; }
+  .date-range-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 430px) {
