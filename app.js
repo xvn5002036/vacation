@@ -160,6 +160,32 @@
     renderCalendar();
   }
 
+  function renderPendingRegistrations(rows) {
+    const list = $("#pendingRegistrations");
+    if (!rows.length) {
+      list.innerHTML = '<div class="empty">目前沒有待審核申請</div>';
+      return;
+    }
+    list.innerHTML = rows.map((row) => `
+      <div class="pending-item">
+        <div>
+          <p><strong>${escapeHtml(row.employee_name)}</strong></p>
+          <p class="pending-account">帳號：${escapeHtml(row.login_username)}｜申請：${escapeHtml(row.created_at.slice(0, 10))}</p>
+        </div>
+        <div class="pending-actions">
+          <button class="approve-button" type="button" data-review-id="${row.registration_id}" data-approve="true">通過</button>
+          <button class="reject-button" type="button" data-review-id="${row.registration_id}" data-approve="false">拒絕</button>
+        </div>
+      </div>`).join("");
+  }
+
+  async function loadPendingRegistrations() {
+    const adminCode = $("#reviewAdminCode").value;
+    if (!adminCode) throw new Error("請輸入管理密碼");
+    const rows = await rpc("admin_get_pending_registrations", { admin_code: adminCode });
+    renderPendingRegistrations(rows);
+  }
+
   function saveSession(session) {
     state.session = session;
     try { sessionStorage.setItem(sessionKey, JSON.stringify(session)); } catch (_) { /* private browsing fallback */ }
@@ -246,6 +272,44 @@
     notify(`登入成功，歡迎 ${result.employee_name}`);
     setPage("calendar");
   }));
+
+  $("#registrationForm").addEventListener("submit", withBusy($("#registrationForm"), async () => {
+    await rpc("register_employee_request", {
+      employee_name: $("#registrationName").value,
+      login_username: $("#registrationUsername").value,
+      login_password: $("#registrationPassword").value
+    });
+    $("#registrationName").value = "";
+    $("#registrationUsername").value = "";
+    $("#registrationPassword").value = "";
+    notify("註冊申請已送出，請等待管理員審核");
+    setPage("leave");
+  }));
+
+  $("#reviewForm").addEventListener("submit", withBusy($("#reviewForm"), loadPendingRegistrations));
+  $("#pendingRegistrations").addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-review-id]");
+    if (!button || button.disabled) return;
+    const adminCode = $("#reviewAdminCode").value;
+    if (!adminCode) {
+      notify("請輸入管理密碼", true);
+      return;
+    }
+    button.disabled = true;
+    try {
+      const approved = button.dataset.approve === "true";
+      await rpc("admin_review_registration", {
+        admin_code: adminCode,
+        registration_id: button.dataset.reviewId,
+        approve_registration: approved
+      });
+      notify(approved ? "註冊已通過，員工現在可以登入" : "註冊申請已拒絕");
+      await Promise.all([loadPendingRegistrations(), loadEmployees()]);
+    } catch (error) {
+      notify(error.message, true);
+      button.disabled = false;
+    }
+  });
 
   $("#logoutButton").addEventListener("click", async () => {
     const token = state.session?.session_token;
