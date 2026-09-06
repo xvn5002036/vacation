@@ -200,7 +200,16 @@ input:focus, select:focus, button:focus-visible { outline: 3px solid rgba(37,99,
 input[type="color"] { padding: 5px; }
 .admin-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); align-items: start; gap: 20px; max-width: 940px; margin: 0 auto; }
 .admin-grid .form-card { width: 100%; }
+.review-card { grid-column: 1 / -1; }
 .secondary-card { box-shadow: 0 12px 30px rgba(16,42,67,.06); }
+.pending-list { display: grid; gap: 10px; margin-top: 18px; }
+.pending-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--wash); }
+.pending-item p { margin: 0; }
+.pending-account { color: var(--muted); font-size: .875rem; }
+.pending-actions { display: flex; gap: 8px; }
+.pending-actions button { min-height: 40px; border-radius: 10px; padding: 7px 12px; font-weight: 800; }
+.approve-button { border: 1px solid #86c99b; background: #edf9f1; color: #166534; }
+.reject-button { border: 1px solid #f2b8b5; background: #fff1f0; color: var(--danger); }
 
 .toast {
   position: fixed;
@@ -226,7 +235,7 @@ input[type="color"] { padding: 5px; }
   .shell { width: min(100% - 20px, 1180px); padding-top: 20px; }
   .topbar { align-items: flex-start; }
   .topbar .compact { white-space: nowrap; }
-  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; }
   .tab { padding-inline: 8px; }
   .calendar-card { border-radius: 14px; }
   .calendar-day { min-height: 82px; padding: 6px 4px; }
@@ -235,6 +244,7 @@ input[type="color"] { padding: 5px; }
   .admin-grid { grid-template-columns: 1fr; }
   .form-actions { grid-template-columns: 1fr; gap: 0; }
   .calendar-duration { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pending-item { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 430px) {
