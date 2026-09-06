@@ -186,6 +186,29 @@
     renderPendingRegistrations(rows);
   }
 
+  function renderEditableEmployees(rows) {
+    const list = $("#employeeEditList");
+    if (!rows.length) {
+      list.innerHTML = '<div class="empty">目前沒有員工</div>';
+      return;
+    }
+    list.innerHTML = rows.map((row) => `
+      <div class="employee-edit-item" data-employee-row="${row.employee_id}">
+        <label>顯示姓名
+          <input class="employee-name-input" type="text" minlength="3" maxlength="3" value="${escapeHtml(row.employee_name)}" required>
+        </label>
+        <p class="employee-edit-account">登入帳號：${escapeHtml(row.login_username)}</p>
+        <button class="save-name-button" type="button" data-save-employee="${row.employee_id}">儲存姓名</button>
+      </div>`).join("");
+  }
+
+  async function loadEditableEmployees() {
+    const adminCode = $("#employeeEditAdminCode").value;
+    if (!adminCode) throw new Error("請輸入管理密碼");
+    const rows = await rpc("admin_get_manageable_employees", { admin_code: adminCode });
+    renderEditableEmployees(rows);
+  }
+
   function saveSession(session) {
     state.session = session;
     try { sessionStorage.setItem(sessionKey, JSON.stringify(session)); } catch (_) { /* private browsing fallback */ }
@@ -305,6 +328,35 @@
       });
       notify(approved ? "註冊已通過，員工現在可以登入" : "註冊申請已拒絕");
       await Promise.all([loadPendingRegistrations(), loadEmployees()]);
+    } catch (error) {
+      notify(error.message, true);
+      button.disabled = false;
+    }
+  });
+
+  $("#employeeEditForm").addEventListener("submit", withBusy($("#employeeEditForm"), loadEditableEmployees));
+  $("#employeeEditList").addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-save-employee]");
+    if (!button || button.disabled) return;
+    const row = button.closest("[data-employee-row]");
+    const newName = row.querySelector(".employee-name-input").value.trim();
+    if ([...newName].length !== 3) {
+      notify("姓名必須剛好是 3 個字", true);
+      return;
+    }
+    button.disabled = true;
+    try {
+      await rpc("admin_update_employee_name", {
+        admin_code: $("#employeeEditAdminCode").value,
+        employee_id: button.dataset.saveEmployee,
+        new_employee_name: newName
+      });
+      notify("員工姓名已更新，月曆也會顯示新姓名");
+      await Promise.all([loadEditableEmployees(), loadEmployees(), loadMonth()]);
+      if (state.session?.employee_id === button.dataset.saveEmployee) {
+        state.session.employee_name = newName;
+        saveSession(state.session);
+      }
     } catch (error) {
       notify(error.message, true);
       button.disabled = false;
