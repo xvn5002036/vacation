@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#16324f">
   <meta name="description" content="團隊共用預休月曆與登記系統">
   <title>員工預休月曆</title>
-  <link rel="stylesheet" href="styles.css?v=20260906-5">
+  <link rel="stylesheet" href="styles.css?v=20260906-6">
 </head>
 <body>
   <div class="shell">
@@ -115,6 +115,20 @@
             <div class="pending-list" id="pendingRegistrations"></div>
           </div>
 
+          <div class="form-card review-card">
+            <div class="section-heading">
+              <p class="eyebrow">DISPLAY NAME</p>
+              <h2>修正員工姓名</h2>
+              <p>管理員可修正打錯的姓名；修改後，原本的排休會自動顯示新姓名。</p>
+            </div>
+            <form id="employeeEditForm">
+              <label for="employeeEditAdminCode">管理密碼</label>
+              <input id="employeeEditAdminCode" type="password" autocomplete="current-password" required>
+              <button class="outline full" type="submit">查看員工名單</button>
+            </form>
+            <div class="employee-edit-list" id="employeeEditList"></div>
+          </div>
+
           <div class="form-card">
             <div class="section-heading">
               <p class="eyebrow">ADMIN</p>
@@ -155,7 +169,7 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="config.js?v=20260906-5"></script>
-  <script src="app.js?v=20260906-5"></script>
+  <script src="config.js?v=20260906-6"></script>
+  <script src="app.js?v=20260906-6"></script>
 </body>
 </html>
