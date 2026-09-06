@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#16324f">
   <meta name="description" content="團隊共用預休月曆與登記系統">
   <title>員工預休月曆</title>
-  <link rel="stylesheet" href="styles.css?v=20260906-4">
+  <link rel="stylesheet" href="styles.css?v=20260906-5">
 </head>
 <body>
   <div class="shell">
@@ -21,6 +21,7 @@
     <nav class="tabs" aria-label="主要功能">
       <button class="tab active" data-page="calendar" type="button">月曆</button>
       <button class="tab" data-page="leave" type="button">員工登入</button>
+      <button class="tab" data-page="register" type="button">申請帳號</button>
       <button class="tab" data-page="admin" type="button">員工管理</button>
     </nav>
 
@@ -79,8 +80,41 @@
         </div>
       </section>
 
+      <section class="page" id="page-register">
+        <div class="form-card">
+          <div class="section-heading">
+            <p class="eyebrow">REGISTER</p>
+            <h2>申請員工帳號</h2>
+            <p>送出後需等待管理員審核通過，才能登入排休。</p>
+          </div>
+          <form id="registrationForm">
+            <label for="registrationName">姓名（必須剛好 3 個字）</label>
+            <input id="registrationName" type="text" minlength="3" maxlength="3" autocomplete="name" required>
+            <label for="registrationUsername">登入帳號</label>
+            <input id="registrationUsername" type="text" minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]+" title="限英文字母、數字、句點、底線或連字號" autocomplete="username" required>
+            <label for="registrationPassword">登入密碼</label>
+            <input id="registrationPassword" type="password" minlength="1" maxlength="72" autocomplete="new-password" required>
+            <button class="primary full" type="submit">送出註冊申請</button>
+          </form>
+        </div>
+      </section>
+
       <section class="page" id="page-admin">
         <div class="admin-grid">
+          <div class="form-card review-card">
+            <div class="section-heading">
+              <p class="eyebrow">APPROVAL</p>
+              <h2>待審核註冊</h2>
+              <p>輸入管理密碼後查看申請，選擇通過或拒絕。</p>
+            </div>
+            <form id="reviewForm">
+              <label for="reviewAdminCode">管理密碼</label>
+              <input id="reviewAdminCode" type="password" autocomplete="current-password" required>
+              <button class="outline full" type="submit">查看待審核名單</button>
+            </form>
+            <div class="pending-list" id="pendingRegistrations"></div>
+          </div>
+
           <div class="form-card">
             <div class="section-heading">
               <p class="eyebrow">ADMIN</p>
@@ -91,7 +125,7 @@
               <label for="adminCode">管理密碼</label>
               <input id="adminCode" type="password" autocomplete="current-password" required>
               <label for="employeeName">員工姓名</label>
-              <input id="employeeName" type="text" maxlength="30" required>
+              <input id="employeeName" type="text" minlength="3" maxlength="3" required>
               <label for="newEmployeeUsername">登入帳號</label>
               <input id="newEmployeeUsername" type="text" minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]+" title="限英文字母、數字、句點、底線或連字號" autocomplete="off" required>
               <label for="newEmployeePassword">初始密碼</label>
@@ -121,7 +155,7 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="config.js?v=20260906-4"></script>
-  <script src="app.js?v=20260906-4"></script>
+  <script src="config.js?v=20260906-5"></script>
+  <script src="app.js?v=20260906-5"></script>
 </body>
 </html>
