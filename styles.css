@@ -210,6 +210,12 @@ input[type="color"] { padding: 5px; }
 .pending-actions button { min-height: 40px; border-radius: 10px; padding: 7px 12px; font-weight: 800; }
 .approve-button { border: 1px solid #86c99b; background: #edf9f1; color: #166534; }
 .reject-button { border: 1px solid #f2b8b5; background: #fff1f0; color: var(--danger); }
+.employee-edit-list { display: grid; gap: 10px; margin-top: 18px; }
+.employee-edit-item { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(170px, 1.2fr) auto; align-items: end; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--wash); }
+.employee-edit-item label { margin: 0; }
+.employee-edit-account { align-self: center; margin: 0; color: var(--muted); font-size: .875rem; overflow-wrap: anywhere; }
+.save-name-button { min-height: 48px; border: 1px solid var(--blue); border-radius: 11px; padding: 9px 16px; background: var(--blue); color: white; font-weight: 800; }
+.save-name-button:disabled { cursor: wait; opacity: .55; }
 
 .toast {
   position: fixed;
@@ -245,6 +251,7 @@ input[type="color"] { padding: 5px; }
   .form-actions { grid-template-columns: 1fr; gap: 0; }
   .calendar-duration { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .pending-item { grid-template-columns: 1fr; }
+  .employee-edit-item { grid-template-columns: 1fr; align-items: stretch; }
 }
 
 @media (max-width: 430px) {
